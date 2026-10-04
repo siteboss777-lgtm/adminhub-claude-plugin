@@ -1,0 +1,13 @@
+{
+  "name": "adminhub",
+  "version": "1.0.0",
+  "description": "Run a Telegram channel from Claude: write, schedule and edit posts, read channel stats and subscribers. Posts go out through your own bot, not your personal account.",
+  "author": {
+    "name": "AdminHub",
+    "url": "https://adminhub.tools"
+  },
+  "homepage": "https://adminhub.tools/mcp/",
+  "repository": "https://github.com/siteboss777-lgtm/adminhub-claude-plugin",
+  "license": "MIT",
+  "keywords": ["telegram", "telegram-channel", "telegram-bot", "content-planning", "social-media", "scheduling", "mcp"]
+}
