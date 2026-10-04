@@ -1,0 +1,1 @@
+{"name": "Coffee Corner", "plan": "free", "timezone": "Europe/Moscow", "bot_connected": true, "bot_username": "coffee_corner_bot", "bot_setup_url": "https://telegram.me/tg_adminhub_bot?startapp=bot", "channels": 1, "mcp_posts_used": 4, "mcp_posts_limit": 30, "connections_limit": 1, "owner_dm_open": true}

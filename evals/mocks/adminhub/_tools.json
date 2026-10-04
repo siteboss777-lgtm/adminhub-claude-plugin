@@ -1,0 +1,493 @@
+{
+  "tools": [
+    {
+      "name": "get_workspace",
+      "title": "Workspace overview",
+      "description": "Workspace name, plan, bot status, owner DM readiness (owner_dm_open,\nsee add_post_image) and this month's MCP post usage.\n",
+      "inputSchema": {
+        "properties": {},
+        "title": "get_workspaceArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Workspace overview",
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_channels",
+      "title": "Your channels",
+      "description": "Channels in this workspace, including ones the bot cannot post to.\n\nOnly channels where bot_is_admin is true AND is_active is true can\nreceive posts — create_post rejects any other channel_id. Check both\nfields before calling create_post with a channel from this list.\n",
+      "inputSchema": {
+        "properties": {},
+        "title": "list_channelsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Your channels",
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_channel_stats",
+      "title": "Channel subscriber stats",
+      "description": "Subscriber totals and day-by-day joins and leaves for one channel.",
+      "inputSchema": {
+        "properties": {
+          "channel_id": {
+            "title": "Channel Id",
+            "type": "integer"
+          },
+          "days": {
+            "default": 7,
+            "title": "Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "channel_id"
+        ],
+        "title": "get_channel_statsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Channel subscriber stats",
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_posts",
+      "title": "Recent posts",
+      "description": "Recent posts in this workspace, newest first.",
+      "inputSchema": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "channel_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Channel Id"
+          },
+          "limit": {
+            "default": 20,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "list_postsArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Recent posts",
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_post",
+      "title": "Post details",
+      "description": "One post with its text and per-channel delivery status.",
+      "inputSchema": {
+        "properties": {
+          "post_id": {
+            "title": "Post Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "post_id"
+        ],
+        "title": "get_postArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Post details",
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_post",
+      "title": "Create a post",
+      "description": "Create a channel post. Text is Telegram HTML; omit scheduled_at to send now.\n\nEvery channel_id must have the bot as admin (see list_channels) — one\nthat doesn't is rejected here, not delivered and left failing silently.\n",
+      "inputSchema": {
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "channel_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Channel Ids",
+            "type": "array"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Title"
+          },
+          "scheduled_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Scheduled At"
+          },
+          "draft": {
+            "default": false,
+            "title": "Draft",
+            "type": "boolean"
+          },
+          "disable_notification": {
+            "default": false,
+            "title": "Disable Notification",
+            "type": "boolean"
+          },
+          "pin": {
+            "default": false,
+            "title": "Pin",
+            "type": "boolean"
+          },
+          "disable_preview": {
+            "default": false,
+            "title": "Disable Preview",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "text",
+          "channel_ids"
+        ],
+        "title": "create_postArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Create a post",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "publish_post",
+      "title": "Publish a draft",
+      "description": "Send a draft now (or at its scheduled time, if it has one).",
+      "inputSchema": {
+        "properties": {
+          "post_id": {
+            "title": "Post Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "post_id"
+        ],
+        "title": "publish_postArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Publish a draft",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cancel_post",
+      "title": "Delete a post",
+      "description": "Delete a draft, scheduled or failed post. Published posts stay.",
+      "inputSchema": {
+        "properties": {
+          "post_id": {
+            "title": "Post Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "post_id"
+        ],
+        "title": "cancel_postArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Delete a post",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "add_post_image",
+      "title": "Attach an image to a post",
+      "description": "Download an image from a URL and attach it to a draft, scheduled or failed post.\n\n⚠️ Side effect the user should know about: Telegram's Bot API has no way\nto hand a bot a URL and get back a file_id for it — a bot can only learn\na file_id for something it has itself sent. So this tool downloads the\nimage, sends it through the workspace bot to the **workspace owner's own\nprivate chat with that bot** to obtain a file_id, then deletes that\nmessage again. The owner will still briefly see (and get a notification\nfor) a photo arriving from their own bot — mention this to them if they\ndid not just ask for the image themselves, so it isn't a surprise.\n\nThat DM must already be open: the owner needs to have pressed Start with\nthe workspace's bot at least once, or Telegram refuses the send outright.\nThis tool checks for that up front and refuses — with a link to the bot\nto hand the owner — before downloading anything if it's missing. To find\nout ahead of time instead of discovering it from a failed call, check\nowner_dm_open on get_workspace.\n\nA post can hold at most 10 media items (Telegram's own cap for a grouped\npost); adding an 11th is refused before the download starts.\n",
+      "inputSchema": {
+        "properties": {
+          "post_id": {
+            "title": "Post Id",
+            "type": "integer"
+          },
+          "image_url": {
+            "title": "Image Url",
+            "type": "string"
+          },
+          "hidden": {
+            "default": false,
+            "title": "Hidden",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "post_id",
+          "image_url"
+        ],
+        "title": "add_post_imageArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Attach an image to a post",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "update_post",
+      "title": "Edit a draft or scheduled post",
+      "description": "Edit a draft, scheduled or failed post's text, title or scheduled time.\n\nOnly the parameters you pass are changed — omit one (or leave it None)\nto keep its current value. scheduled_at follows the same rules as\ncreate_post: ISO 8601 with a UTC offset, a past time is rejected, and an\nempty string means \"leave unchanged\" (there is currently no way to clear\na post's schedule back to \"send immediately\" through this tool). Once a\npost is published, use edit_published_post instead — this tool refuses it.\n",
+      "inputSchema": {
+        "properties": {
+          "post_id": {
+            "title": "Post Id",
+            "type": "integer"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Text"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Title"
+          },
+          "scheduled_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Scheduled At"
+          }
+        },
+        "required": [
+          "post_id"
+        ],
+        "title": "update_postArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Edit a draft or scheduled post",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "edit_published_post",
+      "title": "Edit a published post",
+      "description": "Change the text of a post that has already gone out to its channels.\n\nOnly for posts that are published or partially published — for drafts\nor scheduled posts use update_post instead, which this tool refuses to\ntouch. Buttons, media and everything else about the post are left as\nthey are; only the text changes. Telegram is contacted once per channel\nthe post reached: a failure on one (for example because someone deleted\nthe message there by hand) does not stop the others — check\nedit_results in the response for the per-channel outcome.\n",
+      "inputSchema": {
+        "properties": {
+          "post_id": {
+            "title": "Post Id",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "post_id",
+          "text"
+        ],
+        "title": "edit_published_postArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Edit a published post",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "retry_post_delivery",
+      "title": "Retry a delivery",
+      "description": "Retry delivery for a post's failed or canceled channel target(s).\n\nPass channel_id to retry just that one channel; omit it to retry every\nretryable target on the post at once. This does not talk to Telegram\nitself — like create_post, it resets the target to pending so the next\nworker pass (within a minute) attempts delivery again; check list_posts\nor get_post afterward for the outcome.\n",
+      "inputSchema": {
+        "properties": {
+          "post_id": {
+            "title": "Post Id",
+            "type": "integer"
+          },
+          "channel_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Channel Id"
+          }
+        },
+        "required": [
+          "post_id"
+        ],
+        "title": "retry_post_deliveryArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Retry a delivery",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_subscribers",
+      "title": "Channel subscribers",
+      "description": "Subscribers of one channel: who they are, when they joined, their\nstatus, and recent activity — newest subscriber first.\n\nMoney fields (total spent, lifetime value, payment count, last payment\ndate, and the count of unlocked paid posts) are left out by default:\nthey are a person's financial profile, and an agent asked to \"tell me\nabout my subscribers\" should not pull that out incidentally — including\nindirectly, through sort order (this list is ordered by signup date, not\nby payment recency, precisely so the ordering itself does not leak who\nhas paid). Pass include_spend=True only when the task genuinely calls\nfor it — e.g. finding top payers.\n\nstatus filters to one value (see the error for the full list of allowed\nvalues) — omit it to get every status. limit caps the page at 1-100\n(default 20).\n",
+      "inputSchema": {
+        "properties": {
+          "channel_id": {
+            "title": "Channel Id",
+            "type": "integer"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "limit": {
+            "default": 20,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "include_spend": {
+            "default": false,
+            "title": "Include Spend",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "channel_id"
+        ],
+        "title": "list_subscribersArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Channel subscribers",
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_subscriber",
+      "title": "Subscriber profile",
+      "description": "One subscriber's card: identity, join date, status, activity.\n\nSame privacy rule as list_subscribers — total spent, lifetime value,\npayment count, last payment date, and the count of unlocked paid posts\nare omitted unless you pass include_spend=True. Only turn that on when\nthe task specifically needs this person's financial history, not to\nanswer a general question about them.\n",
+      "inputSchema": {
+        "properties": {
+          "subscriber_id": {
+            "title": "Subscriber Id",
+            "type": "integer"
+          },
+          "include_spend": {
+            "default": false,
+            "title": "Include Spend",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "subscriber_id"
+        ],
+        "title": "get_subscriberArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "title": "Subscriber profile",
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

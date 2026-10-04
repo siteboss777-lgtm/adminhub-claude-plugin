@@ -1,17 +1,15 @@
 {
   "name": "adminhub",
+  "description": "AdminHub plugins for Claude: run Telegram channels through your own bot.",
   "owner": {
     "name": "AdminHub",
     "url": "https://adminhub.tools"
-  },
-  "metadata": {
-    "description": "AdminHub plugins for Claude: run Telegram channels through your own bot."
   },
   "plugins": [
     {
       "name": "adminhub",
       "source": "./",
-      "description": "Run a Telegram channel from Claude: write, schedule and edit posts, read channel stats and subscribers. Posts go out through your own bot, not your personal account.",
+      "description": "Run your Telegram channel from Claude: write, schedule and edit posts, plan content and read channel stats. Posts go out through your own Telegram bot, not your personal account.",
       "category": "productivity",
       "homepage": "https://adminhub.tools/mcp/"
     }
