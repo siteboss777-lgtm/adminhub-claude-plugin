@@ -4,7 +4,7 @@ Run your Telegram channel from Claude. Ask Claude to write and schedule a post, 
 
 ## What's inside
 
-- **AdminHub connector**: AdminHub's hosted MCP server at `https://backend-git-production-cb93.up.railway.app/mcp`. You sign in with Telegram and approve the permissions Claude asks for.
+- **AdminHub connector**: AdminHub's hosted MCP server at `https://mcp.adminhub.tools/mcp`. You sign in with Telegram and approve the permissions Claude asks for.
 - **Skills** that teach Claude the workflow:
   - `publishing-telegram-posts`: checks the bot can post to the channel, writes Telegram HTML, reads times in your time zone, and confirms before anything goes public.
   - `planning-telegram-content`: reads your recent posts and growth, proposes a plan, and saves the approved posts as drafts or scheduled posts.

@@ -2,7 +2,7 @@
   "mcpServers": {
     "adminhub": {
       "type": "http",
-      "url": "https://backend-git-production-cb93.up.railway.app/mcp"
+      "url": "https://mcp.adminhub.tools/mcp"
     }
   }
 }
