@@ -3,7 +3,7 @@
     {
       "name": "get_workspace",
       "title": "Workspace overview",
-      "description": "Workspace name, plan, bot status, owner DM readiness (owner_dm_open,\nsee add_post_image) and this month's MCP post usage.\n",
+      "description": "Workspace name, plan, bot status, whether the owner's private chat\nwith the workspace bot is open (owner_dm_open; attaching images needs\nit) and this month's MCP post usage.\n",
       "inputSchema": {
         "properties": {},
         "title": "get_workspaceArguments",
@@ -18,7 +18,7 @@
     {
       "name": "list_channels",
       "title": "Your channels",
-      "description": "Channels in this workspace, including ones the bot cannot post to.\n\nOnly channels where bot_is_admin is true AND is_active is true can\nreceive posts — create_post rejects any other channel_id. Check both\nfields before calling create_post with a channel from this list.\n",
+      "description": "Channels in this workspace, including ones the bot cannot post to.\n\nOnly channels where bot_is_admin is true AND is_active is true can\nreceive posts; a post aimed at any other channel is rejected.\n",
       "inputSchema": {
         "properties": {},
         "title": "list_channelsArguments",
@@ -129,7 +129,7 @@
     {
       "name": "create_post",
       "title": "Create a post",
-      "description": "Create a channel post. Text is Telegram HTML; omit scheduled_at to send now.\n\nEvery channel_id must have the bot as admin (see list_channels) — one\nthat doesn't is rejected here, not delivered and left failing silently.\n",
+      "description": "Create a channel post. Text is Telegram HTML; omit scheduled_at to send now.\n\nEvery channel_id must be a channel where the bot is an admin; any other\nchannel is rejected here rather than delivered and left failing silently.\n",
       "inputSchema": {
         "properties": {
           "text": {
@@ -256,7 +256,7 @@
     {
       "name": "add_post_image",
       "title": "Attach an image to a post",
-      "description": "Download an image from a URL and attach it to a draft, scheduled or failed post.\n\n⚠️ Side effect the user should know about: Telegram's Bot API has no way\nto hand a bot a URL and get back a file_id for it — a bot can only learn\na file_id for something it has itself sent. So this tool downloads the\nimage, sends it through the workspace bot to the **workspace owner's own\nprivate chat with that bot** to obtain a file_id, then deletes that\nmessage again. The owner will still briefly see (and get a notification\nfor) a photo arriving from their own bot — mention this to them if they\ndid not just ask for the image themselves, so it isn't a surprise.\n\nThat DM must already be open: the owner needs to have pressed Start with\nthe workspace's bot at least once, or Telegram refuses the send outright.\nThis tool checks for that up front and refuses — with a link to the bot\nto hand the owner — before downloading anything if it's missing. To find\nout ahead of time instead of discovering it from a failed call, check\nowner_dm_open on get_workspace.\n\nA post can hold at most 10 media items (Telegram's own cap for a grouped\npost); adding an 11th is refused before the download starts.\n",
+      "description": "Download an image from a URL and attach it to a draft, scheduled or failed post.\n\nSide effect: Telegram's Bot API cannot turn a URL into a file_id — a bot\nonly learns the file_id of something it has sent itself. So the image is\ndownloaded, sent through the workspace bot to the workspace owner's own\nprivate chat with that bot to obtain a file_id, and that message is then\ndeleted. The owner briefly sees (and gets a notification for) a photo\nfrom their own bot.\n\nThat private chat must already be open: the owner has to have pressed\nStart with the workspace bot at least once, or Telegram refuses the send.\nIf it isn't open, the call is refused before anything is downloaded and\nthe error includes a link to the bot. The workspace overview reports\nthis as owner_dm_open.\n\nA post can hold at most 10 media items (Telegram's own cap for a grouped\npost); an 11th is refused before the download starts.\n",
       "inputSchema": {
         "properties": {
           "post_id": {
@@ -291,7 +291,7 @@
     {
       "name": "update_post",
       "title": "Edit a draft or scheduled post",
-      "description": "Edit a draft, scheduled or failed post's text, title or scheduled time.\n\nOnly the parameters you pass are changed — omit one (or leave it None)\nto keep its current value. scheduled_at follows the same rules as\ncreate_post: ISO 8601 with a UTC offset, a past time is rejected, and an\nempty string means \"leave unchanged\" (there is currently no way to clear\na post's schedule back to \"send immediately\" through this tool). Once a\npost is published, use edit_published_post instead — this tool refuses it.\n",
+      "description": "Edit a draft, scheduled or failed post's text, title or scheduled time.\n\nOnly the parameters passed are changed; an omitted (None) parameter keeps\nits current value. scheduled_at is ISO 8601 with a UTC offset, a past\ntime is rejected, and an empty string means \"leave unchanged\" (a post's\nschedule cannot be cleared back to \"send immediately\" here). Published\nposts are refused; their text is changed by editing the published post.\n",
       "inputSchema": {
         "properties": {
           "post_id": {
@@ -352,7 +352,7 @@
     {
       "name": "edit_published_post",
       "title": "Edit a published post",
-      "description": "Change the text of a post that has already gone out to its channels.\n\nOnly for posts that are published or partially published — for drafts\nor scheduled posts use update_post instead, which this tool refuses to\ntouch. Buttons, media and everything else about the post are left as\nthey are; only the text changes. Telegram is contacted once per channel\nthe post reached: a failure on one (for example because someone deleted\nthe message there by hand) does not stop the others — check\nedit_results in the response for the per-channel outcome.\n",
+      "description": "Change the text of a post that has already gone out to its channels.\n\nOnly for posts that are published or partially published; drafts and\nscheduled posts are refused. Buttons, media and everything else about\nthe post are left as they are; only the text changes. Telegram is\ncontacted once per channel the post reached: a failure on one (for\nexample because someone deleted the message there by hand) does not stop\nthe others, and edit_results in the response holds the per-channel\noutcome.\n",
       "inputSchema": {
         "properties": {
           "post_id": {
@@ -382,7 +382,7 @@
     {
       "name": "retry_post_delivery",
       "title": "Retry a delivery",
-      "description": "Retry delivery for a post's failed or canceled channel target(s).\n\nPass channel_id to retry just that one channel; omit it to retry every\nretryable target on the post at once. This does not talk to Telegram\nitself — like create_post, it resets the target to pending so the next\nworker pass (within a minute) attempts delivery again; check list_posts\nor get_post afterward for the outcome.\n",
+      "description": "Retry delivery for a post's failed or canceled channel target(s).\n\nWith channel_id, only that channel is retried; without it, every\nretryable target on the post is. This does not talk to Telegram itself:\nthe target is reset to pending and the next worker pass (within a\nminute) attempts delivery again. The outcome then shows in the post's\ndelivery status.\n",
       "inputSchema": {
         "properties": {
           "post_id": {
@@ -419,7 +419,7 @@
     {
       "name": "list_subscribers",
       "title": "Channel subscribers",
-      "description": "Subscribers of one channel: who they are, when they joined, their\nstatus, and recent activity — newest subscriber first.\n\nMoney fields (total spent, lifetime value, payment count, last payment\ndate, and the count of unlocked paid posts) are left out by default:\nthey are a person's financial profile, and an agent asked to \"tell me\nabout my subscribers\" should not pull that out incidentally — including\nindirectly, through sort order (this list is ordered by signup date, not\nby payment recency, precisely so the ordering itself does not leak who\nhas paid). Pass include_spend=True only when the task genuinely calls\nfor it — e.g. finding top payers.\n\nstatus filters to one value (see the error for the full list of allowed\nvalues) — omit it to get every status. limit caps the page at 1-100\n(default 20).\n",
+      "description": "Subscribers of one channel: who they are, when they joined, their\nstatus, and recent activity — newest subscriber first.\n\nMoney fields (total spent, lifetime value, payment count, last payment\ndate, and the count of unlocked paid posts) are a person's financial\nprofile and are left out unless include_spend=True. The list is ordered\nby signup date, not by payment recency, so the order itself does not\nreveal who has paid.\n\nstatus filters to one value (an invalid value returns the full list of\nallowed ones); without it every status is returned. limit caps the page\nat 1-100 (default 20).\n",
       "inputSchema": {
         "properties": {
           "channel_id": {
@@ -464,7 +464,7 @@
     {
       "name": "get_subscriber",
       "title": "Subscriber profile",
-      "description": "One subscriber's card: identity, join date, status, activity.\n\nSame privacy rule as list_subscribers — total spent, lifetime value,\npayment count, last payment date, and the count of unlocked paid posts\nare omitted unless you pass include_spend=True. Only turn that on when\nthe task specifically needs this person's financial history, not to\nanswer a general question about them.\n",
+      "description": "One subscriber's card: identity, join date, status, activity.\n\nTotal spent, lifetime value, payment count, last payment date and the\ncount of unlocked paid posts are this person's financial history and are\nomitted unless include_spend=True.\n",
       "inputSchema": {
         "properties": {
           "subscriber_id": {

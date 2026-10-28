@@ -28,4 +28,4 @@ Ask only for what you can't infer: how many posts, which dates, fixed events suc
 
 ## 3. Save
 
-After the user approves the plan, write every text and show them together. On an explicit yes, save each with `create_post(..., draft=true)`; use `scheduled_at` instead only if the user asked for scheduling. Finish with the list of post ids and their times.
+After the user approves the plan, write every text and show them together. On an explicit yes, save each with `create_post(channel_ids=[...], draft=true)`, so each draft can be published later; use `scheduled_at` instead only if the user asked for scheduling. Finish with the list of post ids and their times.

@@ -36,10 +36,11 @@ Delivery is queued and happens within about a minute. Report the post id; if the
 ## Changing a post
 
 - Draft, scheduled or failed: `update_post` changes only the fields you pass. To send a scheduled post now, cancel it and create a new one.
+- Publishing a draft: `publish_post` works only on a draft that has channels. A draft saved without `channel_ids` answers `channels_required`; create a new post with the channel instead.
 - Published: `edit_published_post` changes the text only; report `edit_results` per channel.
 - Failed delivery: `retry_post_delivery`, then check `get_post`.
 - `cancel_post` permanently deletes a draft, scheduled or failed post; say so before calling it.
-- Images: `add_post_image` needs `owner_dm_open: true`. Warn the user that the photo briefly appears in their own chat with the bot.
+- Images: `add_post_image` needs `owner_dm_open: true`. Warn the user that the photo briefly appears in their own chat with the bot. If it answers `owner_bot_not_started` or `owner_unreachable`, the bot can't message the workspace owner: give the user the bot link from the error, ask them to open the bot, unblock it if needed and press Start, then try again. Don't publish the post without its image unless the user says so.
 
 ## Limits
 
