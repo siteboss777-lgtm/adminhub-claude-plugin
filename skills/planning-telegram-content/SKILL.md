@@ -24,6 +24,7 @@ Ask only for what you can't infer: how many posts, which dates, fixed events suc
 
 - Keep the channel's current rhythm unless the user asks to change it.
 - Never invent prices, dates, offers or facts. Leave `[placeholder]` for anything the user must supply.
+- Don't carry prices, discounts, free offers or event dates over from old posts into new ones: they may have ended. Use a `[placeholder]` or ask.
 - Keep the batch within the MCP posts left this month.
 
 ## 3. Save
