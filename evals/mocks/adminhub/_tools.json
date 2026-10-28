@@ -231,7 +231,7 @@
     {
       "name": "cancel_post",
       "title": "Delete a post",
-      "description": "Delete a draft, scheduled or failed post. Published posts stay.",
+      "description": "Delete a draft, scheduled or failed post. Published posts stay. A post from the content queue keeps\nits row: it is canceled, its queue item rejected, and it does not go out.",
       "inputSchema": {
         "properties": {
           "post_id": {
