@@ -21,4 +21,4 @@ Read-only: this skill never creates, edits or deletes posts. The tools named her
 - List failed or partly published posts with their `error`, and offer `retry_post_delivery`.
 - End with one to three suggestions tied to what the data shows.
 
-Use only numbers the tools returned. If a period has no data, say so.
+Use only numbers the tools returned, as they are. Don't compute new metrics such as churn rates, shares or "N times the usual" unless the user asks for them. If a period has no data, say so.
